@@ -1,0 +1,40 @@
+[2024-10-30 10:15:04] Transcription: 'Could not understand audio.' | Intent: Unknown Intent | Sentiment: Neutral | Response: Sorry, I didn't understand that request.
+[2024-10-30 10:15:11] Transcription: 'Could not understand audio.' | Intent: Unknown Intent | Sentiment: Neutral | Response: Sorry, I didn't understand that request.
+[2024-10-30 10:15:16] Transcription: 'Could not understand audio.' | Intent: Unknown Intent | Sentiment: Neutral | Response: Sorry, I didn't understand that request.
+[2024-10-30 10:15:20] Transcription: 'Could not understand audio.' | Intent: Unknown Intent | Sentiment: Neutral | Response: Sorry, I didn't understand that request.
+[2024-10-30 10:15:31] Transcription: 'i would like to order room' | Intent: Room Service Order | Sentiment: Positive | Response: I'd be delighted to place that order for you!
+[2024-10-30 10:15:40] Transcription: 'Could not understand audio.' | Intent: Unknown Intent | Sentiment: Neutral | Response: Sorry, I didn't understand that request.
+[2024-10-30 10:15:45] Transcription: 'what are the am' | Intent: Unknown Intent | Sentiment: Neutral | Response: Sorry, I didn't understand that request.
+[2024-10-30 10:15:51] Transcription: 'what are the amen' | Intent: Unknown Intent | Sentiment: Neutral | Response: Sorry, I didn't understand that request.
+[2024-10-30 10:15:56] Transcription: 'Could not understand audio.' | Intent: Unknown Intent | Sentiment: Neutral | Response: Sorry, I didn't understand that request.
+[2024-10-30 10:15:59] Transcription: 'Could not understand audio.' | Intent: Unknown Intent | Sentiment: Neutral | Response: Sorry, I didn't understand that request.
+[2024-10-30 10:16:03] Transcription: 'Could not understand audio.' | Intent: Unknown Intent | Sentiment: Neutral | Response: Sorry, I didn't understand that request.
+[2024-10-30 10:16:07] Transcription: 'Could not understand audio.' | Intent: Unknown Intent | Sentiment: Neutral | Response: Sorry, I didn't understand that request.
+[2024-10-30 10:16:11] Transcription: 'Could not understand audio.' | Intent: Unknown Intent | Sentiment: Neutral | Response: Sorry, I didn't understand that request.
+[2024-10-30 10:16:15] Transcription: 'Could not understand audio.' | Intent: Unknown Intent | Sentiment: Neutral | Response: Sorry, I didn't understand that request.
+[2024-10-30 10:16:21] Transcription: 'Could not understand audio.' | Intent: Unknown Intent | Sentiment: Neutral | Response: Sorry, I didn't understand that request.
+[2024-10-30 10:16:30] Transcription: 'Could not understand audio.' | Intent: Unknown Intent | Sentiment: Neutral | Response: Sorry, I didn't understand that request.
+[2024-10-30 10:16:36] Transcription: 'Could not understand audio.' | Intent: Unknown Intent | Sentiment: Neutral | Response: Sorry, I didn't understand that request.
+[2024-10-30 10:16:42] Transcription: 'Could not understand audio.' | Intent: Unknown Intent | Sentiment: Neutral | Response: Sorry, I didn't understand that request.
+[2024-10-30 10:16:46] Transcription: 'Could not understand audio.' | Intent: Unknown Intent | Sentiment: Neutral | Response: Sorry, I didn't understand that request.
+[2024-10-30 10:16:55] Transcription: 'Could not understand audio.' | Intent: Unknown Intent | Sentiment: Neutral | Response: Sorry, I didn't understand that request.
+[2024-10-30 10:25:30] Transcription: 'Could not understand audio.' | Intent: Unknown Intent | Sentiment: Neutral | Response: Sorry, I didn't understand that request.
+[2024-10-30 10:39:24] Transcription: 'I would like to order room service.' | Intent: Room Service Order | Sentiment: Positive | Response: None
+[2024-10-30 10:39:27] Transcription: 'I would like to order room service.' | Intent: Room Service Order | Sentiment: Positive | Response: None
+[2024-10-30 10:41:20] Transcription: 'I would like to order room service.' | Intent: Room Service Order | Sentiment: Positive | Response: None
+[2024-10-30 10:44:24] Transcription: 'I would like to order from service.' | Intent: Room Service Order | Sentiment: Positive | Response: None
+[2024-10-30 10:45:40] Transcription: 'Can you get me some ice cream?' | Intent: Room Service Order | Sentiment: Neutral | Response: None
+[2024-10-30 10:45:51] Transcription: 'Can you get me some ice cream?' | Intent: Room Service Order | Sentiment: Neutral | Response: None
+[2024-10-30 11:30:07] Transcription: 'Can I get an Ice cream?' | Intent: Unknown Intent | Sentiment: Neutral | Response: I am unable to process your request.
+[2024-10-30 11:38:35] Transcription: 'can i get an ice cream?' | Intent: Room Service Order | Sentiment: Neutral | Response: Your order for room service has been placed.
+[2024-10-30 11:39:24] Transcription: 'i'm unsatisfied with my order' | Intent: Room Service Order | Sentiment: Negative | Response: Your order for room service has been placed.
+[2024-10-30 14:13:48] Transcription: 'I would like to order an Ice Cream' | Intent: Room Service Order | Sentiment: Positive | Response: Your order for room service has been placed.
+[2024-10-30 20:15:57] Transcription: 'can i order an icecream?' | Intent: Room Service Order | Sentiment: Neutral | Response: Your order for room service has been placed.
+[2024-10-30 20:20:40] Transcription: 'can i order an icecream?' | Intent: Order Food | Sentiment: Neutral | Response: I am unable to process your request.
+[2024-10-30 20:20:49] Transcription: 'can i order an ice cream?' | Intent: Order Food | Sentiment: Neutral | Response: I am unable to process your request.
+[2024-10-30 20:21:53] Transcription: 'can i get a pizza?
+' | Intent: Order Food | Sentiment: Neutral | Response: I am unable to process your request.
+[2024-10-30 20:22:07] Transcription: 'Can I get a pizza?' | Intent: Order Food | Sentiment: Neutral | Response: I am unable to process your request.
+[2024-10-30 20:23:22] Transcription: 'Can I order a pizza?' | Intent: Order Food | Sentiment: Neutral | Response: Your order for room service has been placed.
+[2024-10-30 20:24:06] Transcription: 'Can I order a pizza?' | Intent: Order Food | Sentiment: Neutral | Response: Your order for room service has been placed.
+[2024-10-30 20:24:21] Transcription: 'Check in.' | Intent: Other | Sentiment: Neutral | Response: I am unable to process your request.
