@@ -1,33 +1,31 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-// Check for browser compatibility
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
 const VoiceOrder = () => {
     const [input, setInput] = useState('');
     const [response, setResponse] = useState('');
     const [loading, setLoading] = useState(false);
+    const [feedback, setFeedback] = useState('');  // Feedback state
 
-    // Function to start voice recognition
     const startVoiceRecognition = () => {
         if (!SpeechRecognition) {
             alert("Your browser does not support Speech Recognition.");
             return;
         }
 
-        const recognition = new SpeechRecognition(); // Create a new SpeechRecognition object
-        recognition.continuous = false; // Stop automatically after one result
-        recognition.interimResults = false; // Do not show interim results
+        const recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
 
-        // Set up the event handlers
         recognition.onstart = () => {
             console.log('Voice recognition started. Speak into the microphone.');
         };
 
         recognition.onresult = (event) => {
-            const transcript = event.results[0][0].transcript; // Get the recognized speech
-            setInput(transcript); // Set the input state to the recognized speech
+            const transcript = event.results[0][0].transcript;
+            setInput(transcript);
             console.log('You said: ', transcript);
         };
 
@@ -40,7 +38,7 @@ const VoiceOrder = () => {
             console.log('Voice recognition ended.');
         };
 
-        recognition.start(); // Start voice recognition
+        recognition.start();
     };
 
     const handleVoiceOrder = async () => {
@@ -48,29 +46,26 @@ const VoiceOrder = () => {
             alert('Please provide a voice input or type a request before submitting.');
             return;
         }
-        
+
         setLoading(true);
         try {
-            console.log("Sending input to API:", input); // Log input before sending
+            console.log("Sending input to API:", input);
             const res = await axios.post('http://localhost:5000/api/voice-order', {
                 input: input
             });
-            
-            // Log the entire response to see its structure
-            console.log("API Response:", res); 
-            console.log("API Response Data:", res.data); // Log just the data part
 
-            // Check for response data and set it accordingly
+            console.log("API Response:", res);
+            console.log("API Response Data:", res.data);
+
             if (res.data && res.data.response) {
-                setResponse(res.data.response); // Assuming the response structure contains { response: ... }
+                setResponse(res.data.response);
+                speakResponse(res.data.response);  // Speak the response
             } else {
                 setResponse('Unexpected response format from the server.');
             }
-            
-            // Clear the input box after submission
-            setInput(''); // Reset input state
+
+            setInput('');
         } catch (error) {
-            // Improved error handling
             let errorMessage = 'An error occurred. Please try again.';
             if (error.response) {
                 errorMessage = error.response.data?.error || error.response.statusText;
@@ -79,9 +74,29 @@ const VoiceOrder = () => {
             } else {
                 errorMessage = error.message;
             }
-            setResponse(errorMessage); // Set the response to the error message
+            setResponse(errorMessage);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const speakResponse = (response) => {
+        const utterance = new SpeechSynthesisUtterance(response);
+        window.speechSynthesis.speak(utterance);
+    };
+
+    const handleFeedback = async () => {
+        if (!feedback) {
+            alert('Please provide your feedback.');
+            return;
+        }
+
+        try {
+            await axios.post('http://localhost:5000/api/feedback', { feedback });
+            setFeedback('');  // Clear feedback input after submission
+            alert('Thank you for your feedback!');
+        } catch (error) {
+            alert('Error submitting feedback. Please try again.');
         }
     };
 
@@ -112,6 +127,20 @@ const VoiceOrder = () => {
                     </p>
                 </div>
             )}
+            <div style={{ marginTop: '20px' }}>
+                <h3>Feedback:</h3>
+                <textarea
+                    value={feedback}
+                    onChange={(e) => setFeedback(e.target.value)}
+                    rows="3"
+                    cols="50"
+                    placeholder="Provide your feedback here..."
+                    style={{ marginBottom: '10px', width: '100%' }}
+                />
+                <button onClick={handleFeedback} style={{ margin: '5px' }}>
+                    Submit Feedback
+                </button>
+            </div>
         </div>
     );
 };

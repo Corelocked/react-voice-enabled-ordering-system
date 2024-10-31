@@ -38,3 +38,18 @@
 [2024-10-30 20:23:22] Transcription: 'Can I order a pizza?' | Intent: Order Food | Sentiment: Neutral | Response: Your order for room service has been placed.
 [2024-10-30 20:24:06] Transcription: 'Can I order a pizza?' | Intent: Order Food | Sentiment: Neutral | Response: Your order for room service has been placed.
 [2024-10-30 20:24:21] Transcription: 'Check in.' | Intent: Other | Sentiment: Neutral | Response: I am unable to process your request.
+[2024-10-31 09:50:20] Transcription: 'I would like to order an ice cream.' | Intent: Room Service Order | Sentiment: POSITIVE | Response: Thank you for your request! Your order has been received. We'll prepare your food shortly.
+[2024-10-31 09:51:38] Transcription: 'Hello.' | Intent: Unknown Intent | Sentiment: POSITIVE | Response: I'm not sure how to help with that. You can ask me to place an order, request amenities, or ask for information.
+[2024-10-31 09:52:50] Transcription: 'Can I have a toothbrush and a toothpaste?' | Intent: Unknown Intent | Sentiment: NEGATIVE | Response: I'm not sure how to help with that. You can ask me to place an order, request amenities, or ask for information.
+[2024-10-31 09:57:53] Transcription: 'I would like to order a cheeseburger and fries.' | Intent: Room Service Order | Sentiment: POSITIVE | Response: Thank you for your request! Your order will be with you shortly.
+[2024-10-31 09:58:03] Transcription: 'Can I get some more towels, please?' | Intent: Amenities Request | Sentiment: NEGATIVE | Response: I'm really sorry to hear that. Can you provide more details?
+[2024-10-31 09:58:13] Transcription: 'Can I get some more towels, please?' | Intent: Amenities Request | Sentiment: NEGATIVE | Response: I'm really sorry to hear that. Can you provide more details?
+[2024-10-31 10:02:39] Transcription: 'Can I get something?' | Intent: Unknown Intent | Sentiment: NEGATIVE | Response: I'm not sure how to help with that. You can ask me to place an order, request amenities, or ask for information.
+[2024-10-31 10:03:19] Transcription: 'Can I get some more towels, please?' | Intent: Amenities Request | Sentiment: NEGATIVE | Response: Thank you for your request! Your request for additional amenities has been noted. We'll send them to your room soon.
+[2024-10-31 10:03:35] Transcription: 'can i get something?
+' | Intent: Unknown Intent | Sentiment: NEGATIVE | Response: I'm not sure how to help with that. You can ask me to place an order, request amenities, or ask for information.
+[2024-10-31 10:03:43] Transcription: 'i need towels' | Intent: Amenities Request | Sentiment: NEGATIVE | Response: Thank you for your request! Your request for additional amenities has been noted. We'll send them to your room soon.
+[2024-10-31 10:03:50] Transcription: 'i want ice cream' | Intent: Room Service Order | Sentiment: POSITIVE | Response: Thank you for your request! Your order has been received. We'll prepare your food shortly.
+[2024-10-31 10:04:03] Transcription: 'where are my keys?' | Intent: Inquiry | Sentiment: NEGATIVE | Response: I see. Could you please specify what information you would like?
+[2024-10-31 10:04:12] Transcription: 'i lost my keys' | Intent: Unknown Intent | Sentiment: NEGATIVE | Response: I'm not sure how to help with that. You can ask me to place an order, request amenities, or ask for information.
+[2024-10-31 10:04:23] Transcription: 'where is my room?' | Intent: Inquiry | Sentiment: NEGATIVE | Response: I see. Could you please specify what information you would like?
