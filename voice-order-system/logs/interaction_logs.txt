@@ -53,3 +53,8 @@
 [2024-10-31 10:04:03] Transcription: 'where are my keys?' | Intent: Inquiry | Sentiment: NEGATIVE | Response: I see. Could you please specify what information you would like?
 [2024-10-31 10:04:12] Transcription: 'i lost my keys' | Intent: Unknown Intent | Sentiment: NEGATIVE | Response: I'm not sure how to help with that. You can ask me to place an order, request amenities, or ask for information.
 [2024-10-31 10:04:23] Transcription: 'where is my room?' | Intent: Inquiry | Sentiment: NEGATIVE | Response: I see. Could you please specify what information you would like?
+[2024-10-31 10:09:26] Transcription: 'hatdog' | Intent: Unknown Intent | Sentiment: POSITIVE | Response: I'm not sure how to help with that. You can ask me to place an order, request amenities, or ask for information.
+[2024-10-31 10:32:03] Transcription: 'what time is checkout?' | Intent: Inquiry | Sentiment: NEGATIVE | Response: I see. Could you please specify what information you would like?
+[2024-10-31 10:32:20] Transcription: 'can you tell me where the gym is located?' | Intent: Inquiry | Sentiment: NEGATIVE | Response: I see. Could you please specify what information you would like?
+[2024-10-31 10:32:35] Transcription: 'please make a reservation for me at 7pm' | Intent: Reservation Request | Sentiment: POSITIVE | Response: Thank you for your request! Your reservation request is being processed. We'll confirm your booking shortly.
+[2024-10-31 10:32:55] Transcription: 'get me a taxi to the airport' | Intent: Amenities Request | Sentiment: NEGATIVE | Response: Thank you for your request! Your request for additional amenities has been noted. We'll send them to your room soon.
