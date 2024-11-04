@@ -1,17 +1,13 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from transcribe import record_and_transcribe
-from intent_recognizer import recognize_intent
-from sentiment_analysis import analyze_sentiment
-from user_log import log_interaction, log_feedback
+from fuzzywuzzy import process, fuzz
+import fuzzywuzzy
+import pandas as pd
+import re
 import joblib
 import os
-os.environ["HF_HUB_DISABLE_SYMLINKS_WARNING"] = "1"
-os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-import datetime
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user, current_user
+from flask_login import LoginManager, UserMixin, login_required, current_user
 
 app = Flask(__name__)
 CORS(app)
@@ -45,48 +41,58 @@ except Exception as e:
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-@app.route('/api/voice-order', methods=['POST'])
-def voice_order():
-    user_input = request.json.get('input')
-    if not user_input:
-        return jsonify({"error": "No input provided"}), 400
+# Load inquiry responses from CSV
+def load_inquiry_responses(file_path):
+    try:
+        df = pd.read_csv(file_path)
+        inquiries_dict = dict(zip(df['Question'].str.lower(), df['Response']))
+        return inquiries_dict
+    except Exception as e:
+        print(f"Error loading inquiries: {e}")
+        return {}
+
+# Store the inquiry responses
+inquiry_responses = load_inquiry_responses('inquiries.csv')
+
+def handle_inquiry(user_input):
+    inquiry_keys = list(inquiry_responses.keys())
+    print(f"Inquiry Keys: {inquiry_keys}")  # Debug print
+
+    if not inquiry_keys:
+        return "No inquiries loaded. Please check the CSV file."
 
     try:
-        intent = recognize_intent(user_input)
-        sentiment, score = analyze_sentiment(user_input)
-        response = handle_intent(intent, sentiment, user_input)  # Pass user_input here
-
-        # Log the interaction
-        log_interaction(user_input, intent, sentiment, response)
-
-        # Create response data
-        response_data = {
-            "response": response,
-            "intent": intent,
-            "sentiment": sentiment,
-            "score": score
-        }
-        print("Response Data:", response_data)
-        return jsonify(response_data)
+        # Use the fuzz scorer for fuzzy matching
+        best_match, score = process.extractOne(user_input.lower(), inquiry_keys, scorer=fuzz.token_set_ratio)
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        print(f"Error in fuzzy matching: {e}")
+        return "There was an error processing your inquiry."
 
-@app.route('/api/feedback', methods=['POST'])
-def feedback():
-    user_feedback = request.json.get('feedback')
-    if not user_feedback:
-        return jsonify({"error": "No feedback provided"}), 400
+    # Continue with your logic...
+    if score >= 60:  # Adjust threshold as needed
+        return inquiry_responses[best_match]
+    
+    # Check for keywords using regex for common inquiries
+    keywords = {
+        "pool hours": "What are the pool hours?",
+        "breakfast included": "Is breakfast included in my booking?",
+        "check-in": "What time is check-in and check-out?",
+        "late checkout": "Do you offer late checkout?",
+        "nearest atm": "Where is the nearest ATM?",
+        "parking": "Is there parking available at the hotel?",  # General parking inquiry
+        "parking space": "Is there parking available at the hotel?",  # Specific parking inquiry
+        "where can i park": "Where can I find parking?",
+        "how to park": "How can I park my car?",
+        # Add more keywords and corresponding inquiries as needed
+    }
 
-    # Log feedback
-    log_feedback(user_feedback)
-    return jsonify({"message": "Thank you for your feedback!"}), 200
+    # First check for direct keyword matches
+    for keyword, inquiry in keywords.items():
+        if re.search(re.escape(keyword), user_input.lower()):
+            return inquiry_responses.get(inquiry.lower(), "I couldn't find the answer to that inquiry.")
 
-@app.route('/api/user/preferences', methods=['GET'])
-@login_required
-def get_user_preferences():
-    user_id = current_user.id
-    user = User.query.get(user_id)
-    return jsonify({"favorite_foods": user.favorite_foods.split(',') if user.favorite_foods else []})
+    # Fallback to fuzzy matching if no keyword matches
+    return "I'm not quite sure how to help with that. Could you clarify your question?"
 
 def handle_intent(intent, sentiment, user_input):
     positive_response = "Thank you for your request! "
@@ -100,7 +106,7 @@ def handle_intent(intent, sentiment, user_input):
         return positive_response + "Your request for additional amenities has been noted. We'll send them to your room soon."
 
     elif intent == "Inquiry":
-        return neutral_response + "Could you please specify what information you would like?"
+        return handle_inquiry(user_input)
 
     elif intent == "Feedback or Complaint":
         return negative_response + "We appreciate your feedback. Can you provide more details about the issue?"
@@ -112,12 +118,41 @@ def handle_intent(intent, sentiment, user_input):
         return positive_response + "Your check-in/check-out request has been noted. Please proceed to the front desk for further assistance."
 
     elif intent is None or intent == "Unknown":
-        # If intent is not recognized or ambiguous, ask for clarification
         return neutral_response + "I'm not quite sure how to help with that. Could you clarify if you're looking to order food, request amenities, or something else?"
 
     else:
         return "I'm not sure how to help with that. You can ask me to place an order, request amenities, or ask for information."
+
+@app.route('/api/voice-order', methods=['POST'])
+def voice_order():
+    user_input = request.json.get('input')
+    if not user_input:
+        return jsonify({"error": "No input provided"}), 400
+
+    # Handle inquiry using the new function
+    response = handle_inquiry(user_input)
     
+    # Create response data
+    response_data = {
+        "response": response
+    }
+    return jsonify(response_data)
+
+@app.route('/api/feedback', methods=['POST'])
+def feedback():
+    user_feedback = request.json.get('feedback')
+    if not user_feedback:
+        return jsonify({"error": "No feedback provided"}), 400
+
+    # Log feedback here (implement logging if needed)
+    return jsonify({"message": "Thank you for your feedback!"}), 200
+
+@app.route('/api/user/preferences', methods=['GET'])
+@login_required
+def get_user_preferences():
+    user_id = current_user.id
+    user = User.query.get(user_id)
+    return jsonify({"favorite_foods": user.favorite_foods.split(',') if user.favorite_foods else []})
 
 if __name__ == "__main__":
     with app.app_context():

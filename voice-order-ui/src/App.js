@@ -3,9 +3,9 @@ import VoiceOrder from './components/VoiceOrder';
 
 function App() {
     return (
-        <div className="App">
-            <VoiceOrder />
-        </div>
+            <div className="App">
+                <VoiceOrder />
+            </div>
     );
 }
 

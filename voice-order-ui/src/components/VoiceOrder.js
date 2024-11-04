@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
+// Check for SpeechRecognition support
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
 const VoiceOrder = () => {
-    const [input, setInput] = useState('');
-    const [response, setResponse] = useState('');
-    const [loading, setLoading] = useState(false);
-    const [feedback, setFeedback] = useState('');  // Feedback state
+    const [input, setInput] = useState('');        // State for voice input
+    const [response, setResponse] = useState('');  // State for API response
+    const [loading, setLoading] = useState(false); // State for loading status
+    const [feedback, setFeedback] = useState('');  // State for user feedback
 
+    // Start voice recognition
     const startVoiceRecognition = () => {
         if (!SpeechRecognition) {
             alert("Your browser does not support Speech Recognition.");
@@ -16,7 +18,7 @@ const VoiceOrder = () => {
         }
 
         const recognition = new SpeechRecognition();
-        recognition.continuous = false;
+        recognition.continuous = false;  // Stop after one recognition
         recognition.interimResults = false;
 
         recognition.onstart = () => {
@@ -25,7 +27,7 @@ const VoiceOrder = () => {
 
         recognition.onresult = (event) => {
             const transcript = event.results[0][0].transcript;
-            setInput(transcript);
+            setInput(transcript);  // Set the recognized input
             console.log('You said: ', transcript);
         };
 
@@ -38,9 +40,10 @@ const VoiceOrder = () => {
             console.log('Voice recognition ended.');
         };
 
-        recognition.start();
+        recognition.start();  // Start recognition
     };
 
+    // Handle order submission
     const handleVoiceOrder = async () => {
         if (!input) {
             alert('Please provide a voice input or type a request before submitting.');
@@ -55,8 +58,6 @@ const VoiceOrder = () => {
             });
 
             console.log("API Response:", res);
-            console.log("API Response Data:", res.data);
-
             if (res.data && res.data.response) {
                 setResponse(res.data.response);
                 speakResponse(res.data.response);  // Speak the response
@@ -64,7 +65,7 @@ const VoiceOrder = () => {
                 setResponse('Unexpected response format from the server.');
             }
 
-            setInput('');
+            setInput('');  // Clear input after submission
         } catch (error) {
             let errorMessage = 'An error occurred. Please try again.';
             if (error.response) {
@@ -76,15 +77,17 @@ const VoiceOrder = () => {
             }
             setResponse(errorMessage);
         } finally {
-            setLoading(false);
+            setLoading(false);  // Reset loading state
         }
     };
 
+    // Speak out the response using speech synthesis
     const speakResponse = (response) => {
         const utterance = new SpeechSynthesisUtterance(response);
         window.speechSynthesis.speak(utterance);
     };
 
+    // Handle feedback submission
     const handleFeedback = async () => {
         if (!feedback) {
             alert('Please provide your feedback.');
@@ -103,44 +106,46 @@ const VoiceOrder = () => {
     return (
         <div style={{ padding: '20px', textAlign: 'center' }}>
             <h1>Voice Activated Order System</h1>
-            <textarea
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                rows="4"
-                cols="50"
-                placeholder="Type your request here..."
-                style={{ marginBottom: '10px', width: '100%' }}
-            />
-            <div>
-                <button onClick={startVoiceRecognition} disabled={loading} style={{ margin: '5px' }}>
-                    Start Voice Input
-                </button>
-                <button onClick={handleVoiceOrder} disabled={loading || !input} style={{ margin: '5px' }}>
-                    {loading ? 'Processing...' : 'Submit Order'}
-                </button>
-            </div>
-            {response && (
-                <div style={{ marginTop: '20px' }}>
-                    <h3>Response:</h3>
-                    <p style={{ padding: '10px', border: '1px solid #ccc', borderRadius: '5px' }}>
-                        {response}
-                    </p>
-                </div>
-            )}
-            <div style={{ marginTop: '20px' }}>
-                <h3>Feedback:</h3>
+            <>
                 <textarea
-                    value={feedback}
-                    onChange={(e) => setFeedback(e.target.value)}
-                    rows="3"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    rows="4"
                     cols="50"
-                    placeholder="Provide your feedback here..."
+                    placeholder="Type your request here..."
                     style={{ marginBottom: '10px', width: '100%' }}
                 />
-                <button onClick={handleFeedback} style={{ margin: '5px' }}>
-                    Submit Feedback
-                </button>
-            </div>
+                <div>
+                    <button onClick={startVoiceRecognition} disabled={loading} style={{ margin: '5px' }}>
+                        Start Voice Input
+                    </button>
+                    <button onClick={handleVoiceOrder} disabled={loading || !input} style={{ margin: '5px' }}>
+                        {loading ? 'Processing...' : 'Submit Order'}
+                    </button>
+                </div>
+                {response && (
+                    <div style={{ marginTop: '20px' }}>
+                        <h3>Response:</h3>
+                        <p style={{ padding: '10px', border: '1px solid #ccc', borderRadius: '5px' }}>
+                            {response}
+                        </p>
+                    </div>
+                )}
+                <div style={{ marginTop: '20px' }}>
+                    <h3>Feedback:</h3>
+                    <textarea
+                        value={feedback}
+                        onChange={(e) => setFeedback(e.target.value)}
+                        rows="3"
+                        cols="50"
+                        placeholder="Provide your feedback here..."
+                        style={{ marginBottom: '10px', width: '100%' }}
+                    />
+                    <button onClick={handleFeedback} style={{ margin: '5px' }}>
+                        Submit Feedback
+                    </button>
+                </div>
+            </>
         </div>
     );
 };
