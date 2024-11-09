@@ -15,6 +15,20 @@ def analyze_sentiment(text):
         print(f"Error analyzing sentiment: {e}")
         return None, None
 
+def generate_response_based_on_sentiment(text):
+    sentiment, score = analyze_sentiment(text)
+    
+    if sentiment == "POSITIVE":
+        response = f"Thank you for sharing that! We're so glad you had a great experience. Your feedback means a lot to us!"
+    
+    elif sentiment == "NEGATIVE":
+        response = f"We're really sorry to hear that. We value your feedback and will work on improving. Can you please share more details about your experience?"
+    
+    else:
+        response = "Thank you for your input! If you have any specific requests or concerns, feel free to let us know."
+    
+    return response
+
 # Example usage
 if __name__ == "__main__":
     sample_texts = [
@@ -23,5 +37,5 @@ if __name__ == "__main__":
         "I had a terrible experience."
     ]
     for text in sample_texts:
-        sentiment, score = analyze_sentiment(text)
-        print(f"Text: \"{text}\" | Sentiment: {sentiment}, Score: {score:.2f}")
+        response = generate_response_based_on_sentiment(text)
+        print(f"Text: \"{text}\" | Response: {response}")

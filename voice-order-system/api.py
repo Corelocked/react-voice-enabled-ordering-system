@@ -1,13 +1,11 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from fuzzywuzzy import process, fuzz
-import fuzzywuzzy
-import pandas as pd
-import re
-import joblib
 import os
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_required, current_user
+import pandas as pd
+import re
+from fuzzywuzzy import fuzz, process
 
 app = Flask(__name__)
 CORS(app)
@@ -30,98 +28,71 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False)
     favorite_foods = db.Column(db.String(200))
 
-# Load model and vectorizer once when the app starts
-try:
-    model = joblib.load('models/logistic_regression_model.joblib')
-    vectorizer = joblib.load('models/count_vectorizer.joblib')
-except Exception as e:
-    print("Error loading model or vectorizer:", e)
-
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# Load inquiry responses from CSV
-def load_inquiry_responses(file_path):
+# Load inquiries and responses from CSV
+def load_inquiries(file_path):
     try:
         df = pd.read_csv(file_path)
+        df['Question'] = df['Question'].str.strip()  # Clean up any extra spaces
         inquiries_dict = dict(zip(df['Question'].str.lower(), df['Response']))
         return inquiries_dict
     except Exception as e:
         print(f"Error loading inquiries: {e}")
         return {}
 
-# Store the inquiry responses
-inquiry_responses = load_inquiry_responses('inquiries.csv')
+# Store the inquiry responses from CSV
+inquiry_responses = load_inquiries('inquiries.csv')
 
-def handle_inquiry(user_input):
-    inquiry_keys = list(inquiry_responses.keys())
-    print(f"Inquiry Keys: {inquiry_keys}")  # Debug print
+# Define the intents and corresponding keywords
+INTENT_KEYWORDS = {
+    "Room Service Order": ["order", "food", "room service", "meal"],
+    "Amenities Request": ["amenities", "towel", "extra", "pillows", "blanket"],
+    "Feedback or Complaint": ["complaint", "feedback", "issue", "problem"],
+    "Reservation Request": ["reserve", "booking", "reservation", "room"],
+    "Check-In/Check-Out Request": ["check-in", "check-out", "checkin", "checkout", "time"],
+}
 
-    if not inquiry_keys:
-        return "No inquiries loaded. Please check the CSV file."
+# Define the responses for each intent
+INTENT_RESPONSES = {
+    "Room Service Order": "Thank you for your order! Your food will be delivered shortly.",
+    "Amenities Request": "Your request for additional amenities has been noted and will be sent to your room soon.",
+    "Feedback or Complaint": "We're sorry to hear that. Could you please provide more details about the issue?",
+    "Reservation Request": "Your reservation request is being processed. We'll confirm your booking shortly.",
+    "Check-In/Check-Out Request": "Your check-in/check-out request has been noted. Please proceed to the front desk for further assistance.",
+}
 
-    try:
-        # Use the fuzz scorer for fuzzy matching
-        best_match, score = process.extractOne(user_input.lower(), inquiry_keys, scorer=fuzz.token_set_ratio)
-    except Exception as e:
-        print(f"Error in fuzzy matching: {e}")
-        return "There was an error processing your inquiry."
-
-    # Continue with your logic...
-    if score >= 60:  # Adjust threshold as needed
+# Function to perform fuzzy matching between user input and CSV questions
+def match_inquiry(user_input):
+    best_match, score = process.extractOne(user_input.lower(), inquiry_responses.keys(), scorer=fuzz.token_set_ratio)
+    if score >= 70:  # Adjust threshold as needed
         return inquiry_responses[best_match]
-    
-    # Check for keywords using regex for common inquiries
-    keywords = {
-        "pool hours": "What are the pool hours?",
-        "breakfast included": "Is breakfast included in my booking?",
-        "check-in": "What time is check-in and check-out?",
-        "late checkout": "Do you offer late checkout?",
-        "nearest atm": "Where is the nearest ATM?",
-        "parking": "Is there parking available at the hotel?", 
-        "parking space": "Is there parking available at the hotel?", 
-        "where can i park": "Where can I find parking?",
-        "how to park": "How can I park my car?",
-        # Add more keywords and corresponding inquiries as needed
-    }
-
-    # First check for direct keyword matches
-    for keyword, inquiry in keywords.items():
-        if re.search(re.escape(keyword), user_input.lower()):
-            return inquiry_responses.get(inquiry.lower(), "I couldn't find the answer to that inquiry.")
-
-    # Fallback to fuzzy matching if no keyword matches
-    return "I'm not quite sure how to help with that. Could you clarify your question?"
-
-def handle_intent(intent, sentiment, user_input):
-    positive_response = "Thank you for your request! "
-    neutral_response = "I see. "
-    negative_response = "I'm sorry to hear that. "
-
-    if intent == "Room Service Order":
-        return positive_response + "Your order has been received. We'll prepare your food shortly."
-
-    elif intent == "Amenities Request":
-        return positive_response + "Your request for additional amenities has been noted. We'll send them to your room soon."
-
-    elif intent == "Inquiry":
-        return handle_inquiry(user_input)
-
-    elif intent == "Feedback or Complaint":
-        return negative_response + "We appreciate your feedback. Can you provide more details about the issue?"
-
-    elif intent == "Reservation Request":
-        return positive_response + "Your reservation request is being processed. We'll confirm your booking shortly."
-
-    elif intent == "Check-In/Check-Out Request":
-        return positive_response + "Your check-in/check-out request has been noted. Please proceed to the front desk for further assistance."
-
-    elif intent is None or intent == "Unknown":
-        return neutral_response + "I'm not quite sure how to help with that. Could you clarify if you're looking to order food, request amenities, or something else?"
-
     else:
-        return "I'm not sure how to help with that. You can ask me to place an order, request amenities, or ask for information."
+        return None
+
+# Function to determine intent based on keywords
+def determine_intent(user_input):
+    user_input = user_input.lower()
+
+    # First, try to match the user input with the inquiry responses
+    inquiry_response = match_inquiry(user_input)
+    if inquiry_response:
+        return "Inquiry", inquiry_response
+
+    # Check for keyword matches for predefined intents
+    for intent, keywords in INTENT_KEYWORDS.items():
+        if any(keyword in user_input for keyword in keywords):
+            return intent, INTENT_RESPONSES.get(intent, "I'm sorry, I didn't quite understand your request.")
+
+    return "Unknown", "I'm sorry, I didn't quite understand your request."
+
+# Function to handle user input and generate a response
+def handle_user_input(user_input):
+    intent, response = determine_intent(user_input)
+    
+    return response
 
 @app.route('/api/voice-order', methods=['POST'])
 def voice_order():
@@ -129,8 +100,7 @@ def voice_order():
     if not user_input:
         return jsonify({"error": "No input provided"}), 400
 
-    # Handle inquiry using the new function
-    response = handle_inquiry(user_input)
+    response = handle_user_input(user_input)
     
     # Create response data
     response_data = {
