@@ -79,8 +79,8 @@ def handle_inquiry(user_input):
         "check-in": "What time is check-in and check-out?",
         "late checkout": "Do you offer late checkout?",
         "nearest atm": "Where is the nearest ATM?",
-        "parking": "Is there parking available at the hotel?",  # General parking inquiry
-        "parking space": "Is there parking available at the hotel?",  # Specific parking inquiry
+        "parking": "Is there parking available at the hotel?", 
+        "parking space": "Is there parking available at the hotel?", 
         "where can i park": "Where can I find parking?",
         "how to park": "How can I park my car?",
         # Add more keywords and corresponding inquiries as needed
