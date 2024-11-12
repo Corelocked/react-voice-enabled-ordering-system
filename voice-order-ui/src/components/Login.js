@@ -1,6 +1,5 @@
-// Login.js
 import React, { useState } from 'react';
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, signInAnonymously } from "firebase/auth";
 import { auth } from '../firebase';
 import { useNavigate } from 'react-router-dom';
 
@@ -19,9 +18,24 @@ const Login = () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       console.log("Logged in successfully");
-      navigate("/voice-order"); // Redirect to voice-order page upon successful login
+      navigate("/voice-order");
     } catch (err) {
       setError("Invalid email or password.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAnonymousLogin = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      await signInAnonymously(auth);
+      console.log("Logged in as guest");
+      navigate("/voice-order");
+    } catch (err) {
+      setError("Failed to sign in anonymously.");
     } finally {
       setLoading(false);
     }
@@ -49,6 +63,9 @@ const Login = () => {
           {loading ? "Logging in..." : "Login"}
         </button>
       </form>
+      <button onClick={handleAnonymousLogin} disabled={loading}>
+        {loading ? "Logging in..." : "Login as Guest"}
+      </button>
       {error && <p className="error">{error}</p>}
       <p className="signup-redirect">
         Don’t have an account? <a href="/signup">Sign up here</a>
