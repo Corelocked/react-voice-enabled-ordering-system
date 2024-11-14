@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth } from './AuthContext';
+import { AuthContext } from './AuthContext'; 
 
 const ProtectedRoute = ({ children, redirectTo }) => {
-    const { currentUser } = useAuth();
+    const { user } = useContext(AuthContext); 
 
-    if (!currentUser) {
+    if (!user) {
         return <Navigate to={redirectTo} replace />;
     }
 

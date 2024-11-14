@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { signInWithEmailAndPassword, signInAnonymously, onAuthStateChanged } from "firebase/auth";
 import { auth } from '../firebase';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -78,7 +78,7 @@ const Login = () => {
       </button>
       {error && <p className="error">{error}</p>}
       <p className="signup-redirect">
-        Don’t have an account? <a href="/signup">Sign up here</a>
+        Don’t have an account? <Link to="/signup">Sign up here</Link>
       </p>
     </div>
   );
