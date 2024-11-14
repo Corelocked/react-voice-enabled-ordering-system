@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { signOut } from "firebase/auth";
 import { auth } from '../firebase';
 import axios from 'axios';
+import innsightLogo from '../components/innsight_logo.jpg';
+
 
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
@@ -149,7 +151,7 @@ const VoiceOrder = () => {
 
     return (
         <div style={{ padding: '20px', textAlign: 'center' }}>
-            <h1>Voice Activated Order System</h1>
+            <img src={innsightLogo} alt="logo" width="200px" height="200px" />
             <div>
                 <textarea
                     value={input}
