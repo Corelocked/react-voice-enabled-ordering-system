@@ -27,6 +27,7 @@ const VoiceOrder = () => {
             // Microsoft David - English (United States) - Default
             // Microsoft Nanami Online (Natural) - Japanese (Japan)
             // Microsoft SunHI Online (Natural) - Korean (Korea)
+            // Microsoft Libby Online (Natural) - English (United Kingdom)
 
             if (selectedVoice) {
                 console.log("Selected voice:", selectedVoice);
