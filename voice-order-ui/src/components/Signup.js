@@ -24,7 +24,7 @@ const Signup = () => {
     try {
       await createUserWithEmailAndPassword(auth, email, password);
       console.log("Account created successfully");
-      navigate("/login"); // Redirect to login page upon successful signup
+      navigate("/login");
     } catch (err) {
       setError("Failed to create account. Please try again.");
     } finally {

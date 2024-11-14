@@ -59,14 +59,14 @@ def get_frequent_words(df, threshold=5):
 def load_inquiries(file_path):
     try:
         df = pd.read_csv(file_path)
-        df['Question'] = df['Question'].str.strip()  # Clean up any extra spaces
+        df['Question'] = df['Question'].str.strip()
 
         # Preprocess the questions and remove frequent words
         frequent_words = get_frequent_words(df)
         df['Processed Question'] = df['Question'].apply(lambda x: ' '.join([word for word in preprocess_text(x) if word not in frequent_words]))
 
         inquiries_dict = dict(zip(df['Processed Question'].str.lower(), df['Response']))
-        print("Frequent words:", frequent_words)  # Debugging statement to check frequent words
+        print("Frequent words:", frequent_words)
         return inquiries_dict, frequent_words
     except Exception as e:
         print(f"Error loading inquiries: {e}")
@@ -89,13 +89,11 @@ def match_inquiry(user_input):
     
     # Perform fuzzy matching
     best_match, score = process.extractOne(user_input_processed.lower(), inquiry_responses.keys(), scorer=fuzz.token_set_ratio)
-    if score >= 75:  # Adjust threshold for stricter matching
+    if score >= 75:
         return inquiry_responses[best_match]
     else:
         return None
 
-
-# Define the intents and corresponding keywords
 INTENT_KEYWORDS = {
     "Room Service Order": ["order", "food", "room service", "meal", "menu", "snack", "drink", "coffee", "tea", "breakfast", "lunch", "dinner"],
     "Amenities Request": ["towel", "pillows", "extra blanket", "bathroom", "toiletries", "shampoo", "soap", "hair dryer", "robe"],
@@ -118,7 +116,6 @@ INTENT_KEYWORDS = {
     "Event or Conference Room": ["conference room", "meeting room", "event space", "book a conference room", "reserve a meeting room", "event booking"]
 }
 
-# Define the responses for each intent
 INTENT_RESPONSES = {
     "Room Service Order": "Thank you for your order! Your food will be delivered shortly.",
     "Amenities Request": "Your request for additional amenities has been noted and will be sent to your room soon.",
@@ -145,7 +142,6 @@ INTENT_RESPONSES = {
 def determine_intent(user_input):
     user_input = user_input.lower()
 
-    # First, try to match the user input with the inquiry responses
     inquiry_response = match_inquiry(user_input)
     if inquiry_response:
         return "Inquiry", inquiry_response
@@ -194,7 +190,6 @@ def feedback():
     if not user_feedback:
         return jsonify({"error": "No feedback provided"}), 400
 
-    # Log feedback here (implement logging if needed)
     return jsonify({"message": "Thank you for your feedback!"}), 200
 
 @app.route('/api/user/preferences', methods=['GET'])

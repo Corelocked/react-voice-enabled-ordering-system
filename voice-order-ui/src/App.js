@@ -1,21 +1,31 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import VoiceOrder from './components/VoiceOrder';
+import { AuthProvider } from './AuthContext';
+import ProtectedRoute from './ProtectedRoute';
 import Login from './components/Login';
-import Signup from './components/Signup';
+import VoiceOrder from './components/VoiceOrder';
 
 function App() {
     return (
-        <Router>
-            <div className="App">
+        <AuthProvider>
+            <Router>
                 <Routes>
-                    <Route path="/" element={<Navigate to="/login" />} />
+                    {/* Default route that redirects to login */}
+                    <Route path="/" element={<Navigate to="/login" replace />} />
+                    
+                    {/* Defined routes */}
                     <Route path="/login" element={<Login />} />
-                    <Route path="/signup" element={<Signup />} />
-                    <Route path="/voice-order" element={<VoiceOrder />} />
+                    <Route
+                        path="/voice-order"
+                        element={
+                            <ProtectedRoute redirectTo="/login">
+                                <VoiceOrder />
+                            </ProtectedRoute>
+                        }
+                    />
                 </Routes>
-            </div>
-        </Router>
+            </Router>
+        </AuthProvider>
     );
 }
 

@@ -11,7 +11,6 @@ def record_and_transcribe():
         audio = recognizer.listen(source)
 
     try:
-        # Use Google Web Speech API to transcribe audio to text
         transcription = recognizer.recognize_google(audio)
         return transcription
     except sr.UnknownValueError:

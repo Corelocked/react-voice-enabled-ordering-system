@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { signOut } from "firebase/auth";
+import { auth } from '../firebase';
 import axios from 'axios';
 
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -9,28 +12,27 @@ const VoiceOrder = () => {
     const [loading, setLoading] = useState(false);
     const [feedback, setFeedback] = useState('');
     const [chosenVoice, setChosenVoice] = useState(null);
+    const navigate = useNavigate();
 
+    // Load preferred voice for text-to-speech
     useEffect(() => {
-        // Define a function to load voices and select the preferred voice
         const loadVoices = () => {
             const voices = speechSynthesis.getVoices();
             console.log("Available voices:", voices);
-
             const selectedVoice = voices.find(voice => voice.name === 'Microsoft Libby Online (Natural) - English (United Kingdom)');
             
-            //Voice List: 
-            //Microsoft Zira - English (United States)
-            //Microsoft Mark - English (United States)
-            //Microsoft David - English (United States) - Default
-            //Microsoft Nanami Online (Natural) - Japanese (Japan)
-            //Microsoft SunHI Online (Natural) - Korean (Korea)
-
+            // Voice List:
+            // Microsoft Zira - English (United States)
+            // Microsoft Mark - English (United States)
+            // Microsoft David - English (United States) - Default
+            // Microsoft Nanami Online (Natural) - Japanese (Japan)
+            // Microsoft SunHI Online (Natural) - Korean (Korea)
 
             if (selectedVoice) {
                 console.log("Selected voice:", selectedVoice);
                 setChosenVoice(selectedVoice);
             } else {
-                console.warn("Google UK English Female voice not found, using default voice.");
+                console.warn("Preferred voice not found, using default voice.");
                 setChosenVoice(voices[0]);
             }
         };
@@ -40,6 +42,7 @@ const VoiceOrder = () => {
         speechSynthesis.onvoiceschanged = loadVoices;
     }, []);
 
+    // Start voice recognition
     const startVoiceRecognition = () => {
         if (!SpeechRecognition) {
             alert("Your browser does not support Speech Recognition.");
@@ -56,7 +59,7 @@ const VoiceOrder = () => {
 
         recognition.onresult = (event) => {
             const transcript = event.results[0][0].transcript;
-            setInput(transcript);
+            setInput(transcript); // Update input state with recognized speech
             console.log('You said: ', transcript);
         };
 
@@ -72,6 +75,7 @@ const VoiceOrder = () => {
         recognition.start();
     };
 
+    // Handle the voice order submission
     const handleVoiceOrder = async () => {
         if (!input) {
             alert('Please provide a voice input or type a request before submitting.');
@@ -80,8 +84,10 @@ const VoiceOrder = () => {
 
         setLoading(true);
         try {
+            // Send order to the backend API
             const res = await axios.post('http://localhost:5000/api/voice-order', { input });
 
+            // Check response from server and update response state
             if (res.data && res.data.response) {
                 setResponse(res.data.response);
                 speakResponse(res.data.response);
@@ -89,7 +95,7 @@ const VoiceOrder = () => {
                 setResponse('Unexpected response format from the server.');
             }
 
-            setInput('');
+            setInput(''); // Clear input field
         } catch (error) {
             let errorMessage = 'An error occurred. Please try again.';
             if (error.response) {
@@ -101,20 +107,20 @@ const VoiceOrder = () => {
             }
             setResponse(errorMessage);
         } finally {
-            setLoading(false);
+            setLoading(false); 
         }
     };
 
-    const speakResponse = (response) => {
-        const utterance = new SpeechSynthesisUtterance(response);
-
-        utterance.pitch = 1.8;
-        utterance.rate = 1.1;
+    const speakResponse = (responseText) => {
+        const utterance = new SpeechSynthesisUtterance(responseText);
         utterance.voice = chosenVoice;
+        utterance.pitch = 1.8; 
+        utterance.rate = 1.1; 
 
         window.speechSynthesis.speak(utterance);
     };
 
+    // Handle feedback submission to backend API
     const handleFeedback = async () => {
         if (!feedback) {
             alert('Please provide your feedback.');
@@ -130,10 +136,20 @@ const VoiceOrder = () => {
         }
     };
 
+    // Handle user logout and redirect to login page
+    const handleLogout = async () => {
+        try {
+            await signOut(auth); 
+            navigate("/login"); 
+        } catch (error) {
+            console.error('Logout failed:', error);
+        }
+    };
+
     return (
         <div style={{ padding: '20px', textAlign: 'center' }}>
             <h1>Voice Activated Order System</h1>
-            <>
+            <div>
                 <textarea
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
@@ -172,7 +188,11 @@ const VoiceOrder = () => {
                         Submit Feedback
                     </button>
                 </div>
-            </>
+                {/* Logout button to log out the user */}
+                <button onClick={handleLogout} style={{ marginTop: '20px', color: 'red' }}>
+                    Logout
+                </button>
+            </div>
         </div>
     );
 };

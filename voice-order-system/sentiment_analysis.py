@@ -28,14 +28,3 @@ def generate_response_based_on_sentiment(text):
         response = "Thank you for your input! If you have any specific requests or concerns, feel free to let us know."
     
     return response
-
-# Example usage
-if __name__ == "__main__":
-    sample_texts = [
-        "I love the service here, but the food was disappointing.",
-        "The ambiance was great and the food was delicious!",
-        "I had a terrible experience."
-    ]
-    for text in sample_texts:
-        response = generate_response_based_on_sentiment(text)
-        print(f"Text: \"{text}\" | Response: {response}")
