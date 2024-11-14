@@ -1,16 +1,45 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-// Check for SpeechRecognition support
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
 const VoiceOrder = () => {
-    const [input, setInput] = useState('');        // State for voice input
-    const [response, setResponse] = useState('');  // State for API response
-    const [loading, setLoading] = useState(false); // State for loading status
-    const [feedback, setFeedback] = useState('');  // State for user feedback
+    const [input, setInput] = useState('');
+    const [response, setResponse] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [feedback, setFeedback] = useState('');
+    const [chosenVoice, setChosenVoice] = useState(null);
 
-    // Start voice recognition
+    useEffect(() => {
+        // Define a function to load voices and select the preferred voice
+        const loadVoices = () => {
+            const voices = speechSynthesis.getVoices();
+            console.log("Available voices:", voices);
+
+            const selectedVoice = voices.find(voice => voice.name === 'Microsoft Libby Online (Natural) - English (United Kingdom)');
+            
+            //Voice List: 
+            //Microsoft Zira - English (United States)
+            //Microsoft Mark - English (United States)
+            //Microsoft David - English (United States) - Default
+            //Microsoft Nanami Online (Natural) - Japanese (Japan)
+            //Microsoft SunHI Online (Natural) - Korean (Korea)
+
+
+            if (selectedVoice) {
+                console.log("Selected voice:", selectedVoice);
+                setChosenVoice(selectedVoice);
+            } else {
+                console.warn("Google UK English Female voice not found, using default voice.");
+                setChosenVoice(voices[0]);
+            }
+        };
+
+        loadVoices();
+
+        speechSynthesis.onvoiceschanged = loadVoices;
+    }, []);
+
     const startVoiceRecognition = () => {
         if (!SpeechRecognition) {
             alert("Your browser does not support Speech Recognition.");
@@ -18,7 +47,7 @@ const VoiceOrder = () => {
         }
 
         const recognition = new SpeechRecognition();
-        recognition.continuous = false;  // Stop after one recognition
+        recognition.continuous = false;
         recognition.interimResults = false;
 
         recognition.onstart = () => {
@@ -27,7 +56,7 @@ const VoiceOrder = () => {
 
         recognition.onresult = (event) => {
             const transcript = event.results[0][0].transcript;
-            setInput(transcript);  // Set the recognized input
+            setInput(transcript);
             console.log('You said: ', transcript);
         };
 
@@ -40,10 +69,9 @@ const VoiceOrder = () => {
             console.log('Voice recognition ended.');
         };
 
-        recognition.start();  // Start recognition
+        recognition.start();
     };
 
-    // Handle order submission
     const handleVoiceOrder = async () => {
         if (!input) {
             alert('Please provide a voice input or type a request before submitting.');
@@ -52,20 +80,16 @@ const VoiceOrder = () => {
 
         setLoading(true);
         try {
-            console.log("Sending input to API:", input);
-            const res = await axios.post('http://localhost:5000/api/voice-order', {
-                input: input
-            });
+            const res = await axios.post('http://localhost:5000/api/voice-order', { input });
 
-            console.log("API Response:", res);
             if (res.data && res.data.response) {
                 setResponse(res.data.response);
-                speakResponse(res.data.response);  // Speak the response
+                speakResponse(res.data.response);
             } else {
                 setResponse('Unexpected response format from the server.');
             }
 
-            setInput('');  // Clear input after submission
+            setInput('');
         } catch (error) {
             let errorMessage = 'An error occurred. Please try again.';
             if (error.response) {
@@ -77,17 +101,20 @@ const VoiceOrder = () => {
             }
             setResponse(errorMessage);
         } finally {
-            setLoading(false);  // Reset loading state
+            setLoading(false);
         }
     };
 
-    // Speak out the response using speech synthesis
     const speakResponse = (response) => {
         const utterance = new SpeechSynthesisUtterance(response);
+
+        utterance.pitch = 1.8;
+        utterance.rate = 1.1;
+        utterance.voice = chosenVoice;
+
         window.speechSynthesis.speak(utterance);
     };
 
-    // Handle feedback submission
     const handleFeedback = async () => {
         if (!feedback) {
             alert('Please provide your feedback.');
@@ -96,7 +123,7 @@ const VoiceOrder = () => {
 
         try {
             await axios.post('http://localhost:5000/api/feedback', { feedback });
-            setFeedback('');  // Clear feedback input after submission
+            setFeedback('');
             alert('Thank you for your feedback!');
         } catch (error) {
             alert('Error submitting feedback. Please try again.');
