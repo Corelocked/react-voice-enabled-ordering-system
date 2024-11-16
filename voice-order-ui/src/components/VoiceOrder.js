@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { signOut } from "firebase/auth";
 import { auth } from '../firebase';
 import axios from 'axios';
-import innsightLogo from '../components/innsight_logo.jpg';
+import innsightLogo from '../components/innsight_logo_png.png';
 
 
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
