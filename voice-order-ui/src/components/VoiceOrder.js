@@ -5,6 +5,10 @@ import { auth } from '../firebase';
 import axios from 'axios';
 import innsightLogo from '../components/innsight_logo_png.png';
 
+// IMPORTS BY CHRIS
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './VoiceOrder.css';
+import Form from 'react-bootstrap/Form';
 
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
@@ -150,51 +154,46 @@ const VoiceOrder = () => {
     };
 
     return (
-        <div style={{ padding: '20px', textAlign: 'center' }}>
-            <img src={innsightLogo} alt="logo" width="200px" height="200px" />
-            <div>
-                <textarea
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    rows="4"
-                    cols="50"
-                    placeholder="Type your request here..."
-                    style={{ marginBottom: '10px', width: '100%' }}
-                />
+        <div className="order-page">
+            <div className="order-container"> 
+            <img src={innsightLogo} alt="logo" />
+            <p><b>INNSIGHT</b></p>
                 <div>
-                    <button onClick={startVoiceRecognition} disabled={loading} style={{ margin: '5px' }}>
-                        Start Voice Input
-                    </button>
-                    <button onClick={handleVoiceOrder} disabled={loading || !input} style={{ margin: '5px' }}>
+                    <Form.Group className="mb-3" controlId="requestArea">
+                        <Form.Label><b>Request:</b></Form.Label>
+                        <Form.Control
+                            as="textarea"
+                            value={input}
+                            onChange={(e) => setInput(e.target.value)}
+                            rows={4}
+                            placeholder="Type your request here..."
+                        />
+                    </Form.Group>
+                    <button onClick={startVoiceRecognition} disabled={loading}>Start Voice Input</button>
+                    <button onClick={handleVoiceOrder} disabled={loading || !input}>
                         {loading ? 'Processing...' : 'Submit Order'}
                     </button>
                 </div>
                 {response && (
-                    <div style={{ marginTop: '20px' }}>
-                        <h3>Response:</h3>
-                        <p style={{ padding: '10px', border: '1px solid #ccc', borderRadius: '5px' }}>
-                            {response}
-                        </p>
+                    <div className="response-container">
+                        <p><b>Response:</b></p>
+                        <p>{response}</p>
                     </div>
                 )}
-                <div style={{ marginTop: '20px' }}>
-                    <h3>Feedback:</h3>
-                    <textarea
-                        value={feedback}
-                        onChange={(e) => setFeedback(e.target.value)}
-                        rows="3"
-                        cols="50"
-                        placeholder="Provide your feedback here..."
-                        style={{ marginBottom: '10px', width: '100%' }}
-                    />
-                    <button onClick={handleFeedback} style={{ margin: '5px' }}>
-                        Submit Feedback
-                    </button>
+                <div>
+                    <Form.Group className="mb-3" controlId="feedbackArea">
+                        <Form.Label><b>Feedback:</b></Form.Label>
+                        <Form.Control
+                            as="textarea"
+                            value={feedback}
+                            onChange={(e) => setFeedback(e.target.value)}
+                            rows={2}
+                            placeholder="Provide feedback here..."
+                        />
+                    </Form.Group>
+                    <button onClick={handleFeedback}>Submit Feedback</button>
+                    <button onClick={handleLogout}>Logout</button>
                 </div>
-                {/* Logout button to log out the user */}
-                <button onClick={handleLogout} style={{ marginTop: '20px', color: 'red' }}>
-                    Logout
-                </button>
             </div>
         </div>
     );

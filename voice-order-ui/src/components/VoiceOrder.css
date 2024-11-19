@@ -1,0 +1,69 @@
+.order-page {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f7eac9;
+}
+
+  .order-container {
+    width: 500px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    text-align: center;
+  }
+
+  .order-container textarea{
+    width: 350px;
+    margin-bottom: 10px; 
+    border-radius: 30px;
+    resize: none;
+  }
+  
+  .order-page img {
+    max-width: 15%;
+    height: auto;
+  }
+  
+  .order-container button {
+    width: 60%;
+    max-width: 100%;
+    margin-bottom: 5px;
+    margin-top: 5px;
+    padding: 10px;
+    background-color: #b6021a;
+    color: white;
+    border: none;
+    border-radius: 24px;
+    cursor: pointer;
+  }
+
+  .order-container button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }  
+
+  .order-container button:hover {
+    background-color: #cc9f2d;
+  }
+
+  .response-container {
+    max-height: 200px;
+    width: 75%;
+    margin: 15px 0;
+    padding: 10px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    text-align: center;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    box-sizing: border-box;
+    border: 6px solid #ccc;
+    border-radius: 24px;
+  }
